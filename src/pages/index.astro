@@ -1,16 +1,29 @@
 ---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import { wpquery } from "../functions/wpress";
 
+const data = await wpquery({
+	query: `
+        query HomePage($uri: String = "$uri") {
+            nodeByUri(uri: $uri) {
+                ... on Page {
+                    slug
+                    title
+                    seo {
+                        fullHead
+                    }
+                }
+            }
+        }
+    `,
+	variables: { uri: "/" },
+});
+
+const { nodeByUri } = data;
+const { title, seo } = nodeByUri;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title={title} seo={seo.fullHead}>
+	<Header />
+</Layout>

@@ -1,0 +1,52 @@
+---
+import { wpquery } from "../functions/wpress";
+
+const data = await wpquery({
+    query: `
+    query HeaderData {
+        rankMathSettings {
+            meta {
+                local {
+                    logo {
+                        sourceUrl
+                        altText
+                        srcSet
+                    }
+                }
+            }
+        }
+        menuItems {
+            nodes {
+                label
+                path
+            }
+        }
+    }
+    `,
+});
+
+const { rankMathSettings, menuItems } = data;
+const logoURL = rankMathSettings.meta.local.logo.sourceUrl;
+---
+
+<header class="container mx-auto max-w-screen-xl">
+    <main class="mx-0 flex flex-row justify-between items-center min-h-24">
+        <section>
+            <p><span class="text-brand-red font-medium">FOO</span>BLO</p>
+        </section>
+        <section>
+            <nav>
+                <ul class="flex flex-row">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </section>
+        <section>
+            <input type="search" />
+            <button>Search</button>
+        </section>
+    </main>
+</header>
