@@ -4,7 +4,7 @@ import Header from "../components/Header.astro";
 import { wpquery } from "../functions/wpress";
 
 const data = await wpquery({
-	query: `
+    query: `
         query HomePage($uri: String = "$uri") {
             nodeByUri(uri: $uri) {
                 ... on Page {
@@ -17,7 +17,7 @@ const data = await wpquery({
             }
         }
     `,
-	variables: { uri: "/" },
+    variables: { uri: "/" },
 });
 
 const { nodeByUri } = data;
@@ -25,5 +25,5 @@ const { title, seo } = nodeByUri;
 ---
 
 <Layout title={title} seo={seo.fullHead}>
-	<Header />
+    <Header />
 </Layout>
