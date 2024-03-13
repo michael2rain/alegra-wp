@@ -1,0 +1,92 @@
+---
+import { wpquery } from "../functions/wpress";
+import "swiper/css";
+
+const data = await wpquery({
+    query: `
+    query FeaturedPosts($last: Int) {
+        posts(last: $last) {
+            nodes {
+                title
+                featuredImage {
+                    node {
+                        sourceUrl
+                    }
+                }
+                recipiesData {
+                    prepTime
+                    servicingNumber
+                }
+                author {
+                    node {
+                        name
+                    }
+                }
+            }
+        }
+    }
+    `,
+    variables: {
+        last: 3,
+    },
+});
+
+const { posts } = data;
+---
+
+<section>
+    <main class="swiper h-[55vh]">
+        <section class="swiper-wrapper">
+            {
+                posts.nodes.map((post: any) => {
+                    return (
+                        <article
+                            style={`background-image: url('${post.featuredImage.node.sourceUrl}')`}
+                            class="swiper-slide w-full h-[300px] bg-cover bg-center before:z-[-1] before:absolute before:-inset-1 before:bg-black/50"
+                        >
+                            <section class="w-4/5 lg:w-2/5 2xl:w-[35vw] mx-auto h-full flex flex-col gap-y-6 items-center justify-center text-white">
+                                <h2 class="text-5xl lg:text-6xl text-center font-semibold font-heading text-balance">
+                                    {post.title}
+                                </h2>
+                                <ul class="flex flex-row gap-x-4 mb-3 *:font-medium">
+                                    <li>{post.recipiesData.prepTime}</li>
+                                    <li>{post.recipiesData.servicingNumber}</li>
+                                    <li>{post.author.node.name}</li>
+                                </ul>
+                                <button class="bg-brand-red text-white font-medium px-4 py-3">
+                                    Read recipie
+                                </button>
+                            </section>
+                        </article>
+                    );
+                })
+            }
+            <!-- Swiper Traking Thumbs -->
+            <!-- {
+                posts.nodes.map((post: any) => {
+                    return (
+                        <article
+                            style={`background-image: url('${post.featuredImage.node.sourceUrl}')`}
+                            class="swiper-slide w-1/5 h-[100px] bg-cover bg-center"
+                        />
+                    );
+                })
+            } -->
+            <button class="swiper-button-prev"></button>
+            <button class="swiper-button-next"></button>
+        </section>
+    </main>
+</section>
+
+<script>
+    import Swiper from "swiper";
+
+    const swiper = new Swiper(".swiper", {
+        slidesPerView: 1,
+        loop: true,
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+    });
+</script>

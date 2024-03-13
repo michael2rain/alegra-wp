@@ -1,14 +1,17 @@
 ---
 import "../css/global.css";
+import "@fontsource/playfair-display/400.css";
+import "@fontsource/playfair-display/500.css";
+import "@fontsource/playfair-display/600.css";
+import "@fontsource/playfair-display/700.css";
+import "@fontsource/playfair-display/800.css";
+import "@fontsource/playfair-display/900.css";
 interface Props {
-    title: string;
-    description?: string;
-    image?: string;
-    url?: string;
-    seo?: string;
+    seoFullHead?: string;
+    inlineCss?: string;
 }
 
-const { seo } = Astro.props;
+const { seoFullHead, inlineCss } = Astro.props;
 ---
 
 <html lang="en">
@@ -17,9 +20,8 @@ const { seo } = Astro.props;
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width" />
         <meta name="canonical" content={Astro.url} />
-        {!seo ? null : <Fragment set:html={seo} />}
+        {!seoFullHead ? null : <Fragment set:html={seoFullHead} />}
+        {!inlineCss ? null : <style set:html={inlineCss} />}
     </head>
-    <body>
-        <slot />
-    </body>
+    <body class="bg-slate-50"> <slot /> </body>
 </html>

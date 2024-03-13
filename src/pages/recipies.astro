@@ -5,36 +5,50 @@ import { wpquery } from "../functions/wpress";
 
 const data = await wpquery({
     query: `
-        query HomePage($uri: String = "$uri") {
-            nodeByUri(uri: $uri) {
-                ... on Page {
-                    slug
-                    title
-                    seo {
-                        fullHead
-                    }
-                    blocks {
-                        name
-                        order
-                        saveContent
-                    }
+    query HomePage($uri: String = "$uri") {
+        nodeByUri(uri: $uri) {
+            ... on Page {
+                slug
+                title
+                seo {
+                    fullHead
+                }
+                blocks {
+                    name
+                    order
+                    originalContent
+                    isDynamic
+                    dynamicContent
+                    attributesJSON
                 }
             }
         }
+        globalStylesheet
+    }
     `,
     variables: { uri: "/recipies" },
 });
 
-const { nodeByUri } = data;
-const { title, seo } = nodeByUri;
+const { nodeByUri, globalStylesheet } = data;
+const { title, seo, blocks } = nodeByUri;
 ---
 
-<Layout title={title} seo={seo.fullHead}>
+<Layout seoFullHead={seo.fullHead}>
     <Header />
     <section class="container mx-auto max-w-screen-xl px-4">
         <main class="py-12">
             <h1 class="text-4xl font-bold">{title}</h1>
-            <p class="mt-4">Página de about me</p>
+            <div class="mt-8">
+                {
+                    blocks.map((block: any) =>
+                        block.isDynamic ? (
+                            <Fragment set:html={block.dynamicContent} />
+                        ) : (
+                            <Fragment set:html={block.originalContent} />
+                        ),
+                    )
+                }
+            </div>
         </main>
     </section>
 </Layout>

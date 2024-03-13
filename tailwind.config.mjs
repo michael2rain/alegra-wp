@@ -8,6 +8,9 @@ export default {
 					'red': '#FF4152',
 				}
 			},
+			fontFamily: {
+				'heading': ['Playflair Display', 'serif'],
+			},
 		},
 	},
 	plugins: [],

@@ -34,10 +34,10 @@ const data = await wpquery({
 
 const { rankMathSettings, menuItems } = data;
 const siteLogo = rankMathSettings.meta.local.logo;
-const siteUrl = Astro.url.origin;
+const siteUrl = import.meta.env.FRONT_END_DOMAIN;
 ---
 
-<header class="bg-slate-50">
+<header class="h-[7.1rem] lg:h-fit bg-white">
     <main
         class="container mx-auto max-w-screen-xl flex flex-row justify-between items-center min-h-16 lg:min-h-24 lg:px-4"
     >
