@@ -1,6 +1,28 @@
 ---
-import { wpquery } from "../functions/wpress";
 import "swiper/css";
+import { wpquery } from "../functions/wpress";
+import AuthorIcon from "../components/icons/Author.astro";
+import ClockIcon from "../components/icons/Clock.astro";
+import FoodIcon from "../components/icons/Food.astro";
+
+interface Post {
+    title: string;
+    uri: string;
+    featuredImage: {
+        node: {
+            sourceUrl: string;
+        };
+    };
+    recipiesData: {
+        prepTime: number;
+        servicingNumber: number;
+    };
+    author: {
+        node: {
+            name: string;
+        };
+    };
+}
 
 const data = await wpquery({
     query: `
@@ -8,6 +30,7 @@ const data = await wpquery({
         posts(last: $last) {
             nodes {
                 title
+                uri
                 featuredImage {
                     node {
                         sourceUrl
@@ -27,66 +50,123 @@ const data = await wpquery({
     }
     `,
     variables: {
-        last: 3,
+        last: 4,
     },
 });
 
 const { posts } = data;
 ---
 
+<style>
+    .swiper-slide-thumb-active::after {
+        opacity: 0.4;
+    }
+    .swiper-slide-thumb-active {
+        border-image: linear-gradient(
+                rgba(255, 255, 255, 1),
+                rgba(255, 65, 82, 1)
+            )
+            23 / 35px;
+    }
+    .swiper.thumbs {
+        padding: 0 1rem;
+    }
+</style>
+
 <section>
-    <main class="swiper h-[55vh]">
-        <section class="swiper-wrapper">
+    <section class="swiper slider h-[580px] lg:h-[calc(50vh_+_112px)]">
+        <main class="swiper-wrapper">
             {
-                posts.nodes.map((post: any) => {
+                posts.nodes.map((post: Post) => {
                     return (
                         <article
                             style={`background-image: url('${post.featuredImage.node.sourceUrl}')`}
-                            class="swiper-slide w-full h-[300px] bg-cover bg-center before:z-[-1] before:absolute before:-inset-1 before:bg-black/50"
+                            class="swiper-slide w-full h-[300px] bg-cover bg-center"
                         >
-                            <section class="w-4/5 lg:w-2/5 2xl:w-[35vw] mx-auto h-full flex flex-col gap-y-6 items-center justify-center text-white">
+                            <section class="w-4/5 lg:w-2/5 2xl:w-[30vw] mx-auto h-full flex flex-col gap-y-6 items-center justify-center text-white *:z-10 before:z-[0] before:absolute before:-inset-0 before:bg-black/50">
                                 <h2 class="text-5xl lg:text-6xl text-center font-semibold font-heading text-balance">
                                     {post.title}
                                 </h2>
-                                <ul class="flex flex-row gap-x-4 mb-3 *:font-medium">
-                                    <li>{post.recipiesData.prepTime}</li>
-                                    <li>{post.recipiesData.servicingNumber}</li>
-                                    <li>{post.author.node.name}</li>
+                                <ul class="flex flex-row flex-wrap gap-x-7 gap-y-3.5 justify-center mt-2 mb-4 *:font-medium *:flex *:flex-row *:gap-x-2">
+                                    <li>
+                                        <FoodIcon className="w-6 h-6 fill-brand-red" />
+                                        {post.recipiesData.servicingNumber}{" "}
+                                        servings
+                                    </li>
+                                    <li>
+                                        <ClockIcon className="w-6 h-6 fill-brand-red" />
+                                        {post.recipiesData.prepTime}
+                                        Minutes
+                                    </li>
+                                    <li>
+                                        <AuthorIcon className="w-6 h-6 fill-brand-red" />
+                                        {post.author.node.name}
+                                    </li>
                                 </ul>
-                                <button class="bg-brand-red text-white font-medium px-4 py-3">
+                                <a
+                                    href={post.uri}
+                                    class="bg-brand-red/90 hover:bg-brand-red transition-all text-white font-medium px-5 py-3 mb-8"
+                                >
                                     Read recipie
-                                </button>
+                                </a>
                             </section>
                         </article>
                     );
                 })
             }
-            <!-- Swiper Traking Thumbs -->
-            <!-- {
-                posts.nodes.map((post: any) => {
+        </main>
+    </section>
+    <section class="swiper thumbs max-w-screen-xl mx-auto -mt-14 lg:-mt-28">
+        <main class="swiper-wrapper">
+            {
+                posts.nodes.map((post: Post) => {
                     return (
-                        <article
-                            style={`background-image: url('${post.featuredImage.node.sourceUrl}')`}
-                            class="swiper-slide w-1/5 h-[100px] bg-cover bg-center"
-                        />
+                        <article class="swiper-slide border-2 lg:border-[4px] lg:w-44 lg:h-44 after:absolute after:cursor-pointer after:-inset-0 after:bg-black/50 hover:after:opacity-0 after:transition-opacity">
+                            <img
+                                class="w-full h-32 md:h-40 lg:h-56 object-cover"
+                                width="176"
+                                height="176"
+                                src={post.featuredImage.node.sourceUrl}
+                                alt={post.title}
+                            />
+                        </article>
                     );
                 })
-            } -->
-            <button class="swiper-button-prev"></button>
-            <button class="swiper-button-next"></button>
-        </section>
-    </main>
+            }
+        </main>
+    </section>
 </section>
 
 <script>
     import Swiper from "swiper";
+    import { Navigation, Thumbs } from "swiper/modules";
 
-    const swiper = new Swiper(".swiper", {
+    const slideThumbs = new Swiper(".thumbs", {
+        modules: [Thumbs],
+        slidesPerView: 4,
+        watchSlidesProgress: true,
+        breakpoints: {
+            1280: {
+                slidesPerView: 4,
+                spaceBetween: 32,
+            },
+            768: {
+                slidesPerView: 3,
+                spaceBetween: 16,
+            },
+            320: {
+                slidesPerView: 2,
+                spaceBetween: 10,
+            },
+        },
+    });
+
+    const slide = new Swiper(".slider", {
+        modules: [Navigation, Thumbs],
+        cssMode: true,
         slidesPerView: 1,
-        loop: true,
-        navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
+        thumbs: {
+            swiper: slideThumbs,
         },
     });
 </script>
