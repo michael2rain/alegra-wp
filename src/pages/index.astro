@@ -25,13 +25,13 @@ const data = await wpquery({
 });
 
 const { nodeByUri, globalStylesheet } = data;
-const { title, seo, blocks } = nodeByUri;
+const { seo, blocks } = nodeByUri;
 ---
 
 <Layout inlineCss={globalStylesheet} seoFullHead={seo.fullHead}>
     <FeaturePostSlider />
     <section class="container mx-auto max-w-screen-xl px-4">
-        <main class="py-24">
+        <main class="py-16 lg:py-24">
             {
                 blocks.map((block: any) => {
                     return <BlockField {...block} />;

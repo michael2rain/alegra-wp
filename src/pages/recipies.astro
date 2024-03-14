@@ -1,7 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Header from "../components/Header.astro";
 import { wpquery } from "../functions/wpress";
+import BlockField, { BLOCKS_FIELD } from "../components/BlockField.astro";
 
 const data = await wpquery({
     query: `
@@ -13,32 +13,28 @@ const data = await wpquery({
                 seo {
                     fullHead
                 }
+                ...BlocksField
             }
         }
+        globalStylesheet
     }
+    ${BLOCKS_FIELD}
     `,
     variables: { uri: "/recipies" },
 });
 
 const { nodeByUri, globalStylesheet } = data;
-const { title, seo, blocks } = nodeByUri;
+const { seo, blocks } = nodeByUri;
 ---
 
-<Layout seoFullHead={seo.fullHead}>
+<Layout inlineCss={globalStylesheet} seoFullHead={seo.fullHead}>
     <section class="container mx-auto max-w-screen-xl px-4">
-        <main class="py-12">
-            <h1 class="text-4xl font-bold">{title}</h1>
-            <div class="mt-8">
-                {
-                    blocks.map((block: any) =>
-                        block.isDynamic ? (
-                            <Fragment set:html={block.dynamicContent} />
-                        ) : (
-                            <Fragment set:html={block.originalContent} />
-                        ),
-                    )
-                }
-            </div>
+        <main class="py-12 lg:py-24">
+            {
+                blocks.map((block: any) => {
+                    return <BlockField {...block} />;
+                })
+            }
         </main>
     </section>
 </Layout>

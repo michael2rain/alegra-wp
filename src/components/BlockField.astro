@@ -13,6 +13,13 @@ export const BLOCKS_FIELD = `
     fragment BlocksField on Page {
         blocks {
             name
+            ... on CoreHeadingBlock {
+                attributes {
+                    ... on CoreHeadingBlockAttributes {
+                        ...HeadingBlockAttributes
+                    }
+                }
+            }
             ... on CoreParagraphBlock {
                 attributes {
                     ... on CoreParagraphBlockAttributes {
@@ -47,6 +54,7 @@ const { attributes, name, innerBlocks } = Astro.props;
 
 {
     (name === "core/paragraph" && <ParagraphBlock {...attributes} />) ||
+    (name === "core/heading" && <HeadingBlock {...attributes} />) ||
         (name === "core/columns" && (
             <article class=`flex ${attributes.isStackedOnMobile ? "flex-col md:flex-row" : "flex-row"} gap-x-12 gap-y-16` >
                 {innerBlocks.map((block: any) => {
