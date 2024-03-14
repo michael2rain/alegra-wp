@@ -1,8 +1,8 @@
 ---
 import { wpquery } from "../functions/wpress";
 import Layout from "../layouts/Layout.astro";
-import Header from "../components/Header.astro";
 import FeaturePostSlider from "../components/FeaturePostSlider.astro";
+import BlockField, { BLOCKS_FIELD } from "../components/BlockField.astro";
 
 const data = await wpquery({
     query: `
@@ -14,18 +14,12 @@ const data = await wpquery({
                 seo {
                     fullHead
                 }
-                blocks {
-                    name
-                    order
-                    originalContent
-                    isDynamic
-                    dynamicContent
-                    attributesJSON
-                }
+                ...BlocksField
             }
         }
         globalStylesheet
     }
+    ${BLOCKS_FIELD}
     `,
     variables: { uri: "/" },
 });
@@ -35,22 +29,14 @@ const { title, seo, blocks } = nodeByUri;
 ---
 
 <Layout inlineCss={globalStylesheet} seoFullHead={seo.fullHead}>
-    <Header />
     <FeaturePostSlider />
     <section class="container mx-auto max-w-screen-xl px-4">
-        <main class="py-12">
-            <h1 class="text-4xl font-bold">{title}</h1>
-            <div class="mt-8">
-                {
-                    blocks.map((block: any) =>
-                        block.isDynamic ? (
-                            <Fragment set:html={block.dynamicContent} />
-                        ) : (
-                            <Fragment set:html={block.originalContent} />
-                        ),
-                    )
-                }
-            </div>
+        <main class="py-24">
+            {
+                blocks.map((block: any) => {
+                    return <BlockField {...block} />;
+                })
+            }
         </main>
     </section>
 </Layout>

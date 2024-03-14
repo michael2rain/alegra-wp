@@ -1,0 +1,65 @@
+---
+import ColumnBlock, {
+    COLUMN_BLOCK_ATRIBUTES,
+} from "./wp-blocks/ColumnBlock.astro";
+import ParagraphBlock, {
+    PARAGRAPH_BLOCK_ATTRIBUTES,
+} from "./wp-blocks/ParagraphBlock.astro";
+import HeadingBlock, {
+    HEADING_BLOCK_ATTRIBUTES,
+} from "./wp-blocks/HeadingBlock.astro";
+
+export const BLOCKS_FIELD = `
+    fragment BlocksField on Page {
+        blocks {
+            name
+            ... on CoreParagraphBlock {
+                attributes {
+                    ... on CoreParagraphBlockAttributes {
+                        ...ParagraphBlockAttributes
+                    }
+                }
+            }
+            ... on CoreColumnsBlock {
+                name
+                attributes {
+                    ... on CoreColumnsBlockAttributes {
+                        isStackedOnMobile
+                    }
+                }
+                innerBlocks {
+                    name
+                    ... on CoreColumnBlock {
+                        name
+                        ...ColumnAtributes
+                    }
+                }
+            }
+        }
+    }
+    ${COLUMN_BLOCK_ATRIBUTES}
+    ${PARAGRAPH_BLOCK_ATTRIBUTES}
+    ${HEADING_BLOCK_ATTRIBUTES}
+`;
+
+const { attributes, name, innerBlocks } = Astro.props;
+---
+
+{
+    (name === "core/paragraph" && <ParagraphBlock {...attributes} />) ||
+        (name === "core/columns" && (
+            <article class=`flex ${attributes.isStackedOnMobile ? "flex-col md:flex-row" : "flex-row"} gap-x-12 gap-y-16` >
+                {innerBlocks.map((block: any) => {
+                    if (block.name === "core/column") {
+                        return (
+                            <ColumnBlock
+                                {...block}
+                                attributes={block.attributes}
+                                isStackedOnMobile={attributes.isStackedOnMobile}
+                            />
+                        );
+                    }
+                })}
+            </article>
+        ))
+}

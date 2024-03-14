@@ -1,0 +1,92 @@
+---
+import "../../css/wp-blocks.css";
+import ParagraphBlock from "../wp-blocks/ParagraphBlock.astro";
+import HeadingBlock from "../wp-blocks/HeadingBlock.astro";
+import SeparatorBlock from "../wp-blocks/SeparatorBlock.astro";
+
+export const COLUMN_BLOCK_ATRIBUTES = `
+    fragment ColumnAtributes on CoreColumnBlock {
+        attributes {
+            ... on CoreColumnBlockAttributes {
+                width
+                verticalAlignment
+                textColor
+                layout
+                gradient
+                className
+                backgroundColor
+                anchor
+            }
+        }
+        innerBlocks {
+            name
+            ... on CoreHeadingBlock {
+                attributes {
+                    ... on CoreHeadingBlockAttributes {
+                        ...HeadingBlockAttributes
+                    }
+                }
+            }
+            ... on CoreParagraphBlock {
+                attributes {
+                    ... on CoreParagraphBlockAttributes {
+                        ...ParagraphBlockAttributes
+                    }
+                }
+            }
+            ... on CoreLatestPostsBlock {
+                name
+                dynamicContent
+            }
+            ... on CoreSeparatorBlock {
+                name
+                saveContent
+            }
+            ... on CoreImageBlock {
+                saveContent
+            }
+            ... on CoreSocialLinksBlock {
+                name
+                innerBlocks {
+                    dynamicContent
+                }
+            }
+        }
+    }
+`;
+
+const { innerBlocks, attributes, isStackedOnMobile } = Astro.props;
+---
+
+<section
+    style=`--col-width: ${attributes.width}; --col-movile-width: ${isStackedOnMobile ? "100%" : attributes.width};`
+>
+    {
+        innerBlocks.map((block: any) => {
+            switch (block.name) {
+                case "core/heading":
+                    return <HeadingBlock {...block.attributes} />;
+                case "core/paragraph":
+                    return <ParagraphBlock {...block.attributes} />;
+                case "core/latest-posts":
+                    return <Fragment set:html={block.dynamicContent} />;
+                case "core/separator":
+                    return <SeparatorBlock {...block.attributes} />;
+                case "core/image":
+                    return <Fragment set:html={block.saveContent} />;
+                case "core/social-links": {
+                    const socialLinks = block.innerBlocks.map(
+                        (link: any) => link.dynamicContent,
+                    );
+                    return (
+                        <div class="social-links">
+                            {socialLinks.map((link: any) => (
+                                <Fragment set:html={link} />
+                            ))}
+                        </div>
+                    );
+                }
+            }
+        })
+    }
+</section>

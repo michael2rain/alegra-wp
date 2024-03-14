@@ -1,0 +1,33 @@
+---
+const { fontSize, align, backgroundColor, className, content, textColor } =
+    Astro.props;
+
+export const PARAGRAPH_BLOCK_ATTRIBUTES = `
+    fragment ParagraphBlockAttributes on CoreParagraphBlockAttributes {
+        fontSize
+        align
+        backgroundColor
+        className
+        content
+        textColor
+    }
+`;
+
+const getClassName = (align: string) => {
+    if (align === "center" || align === "right") {
+        return `text-${align}`;
+    }
+
+    return "text-left";
+};
+
+const blockStyles = [
+    getClassName(align),
+    className,
+    fontSize && `has-${fontSize}-font-size`,
+    textColor && `has-${textColor}-color`,
+    backgroundColor && `has-${backgroundColor}-background-color`,
+];
+---
+
+<p class={blockStyles.join(" ")} set:html={content} />

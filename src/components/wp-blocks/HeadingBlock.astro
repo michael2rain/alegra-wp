@@ -1,0 +1,63 @@
+---
+const {
+    backgroundColor,
+    className,
+    content,
+    level,
+    textAlign,
+    textColor,
+    fontSize,
+} = Astro.props;
+
+export const HEADING_BLOCK_ATTRIBUTES = `
+    fragment HeadingBlockAttributes on CoreHeadingBlockAttributes {
+        fontSize
+        backgroundColor
+        className
+        content
+        level
+        textAlign
+        textColor
+    }
+`;
+
+const getClassName = (textAlign: string) => {
+    if (textAlign === "center" || textAlign === "right") {
+        return `text-${textAlign}`;
+    }
+
+    return "text-left";
+};
+
+const blockStyles = [
+    getClassName(textAlign),
+    className,
+    fontSize && `has-${fontSize}-font-size`,
+    textColor && `has-${textColor}-color`,
+    backgroundColor && `has-${backgroundColor}-background-color`,
+];
+---
+
+{
+    (level === 1 && (
+        <h1
+            class={`${blockStyles.join(" ")} font-heading font-semibold`}
+            set:html={content}
+        />
+    )) ||
+        (level === 2 && (
+            <h2
+                class={`${blockStyles.join(" ")} font-heading font-semibold`}
+                set:html={content}
+            />
+        )) ||
+        (level === 3 && (
+            <h3
+                class={`${blockStyles.join(" ")} font-heading font-semibold text-2xl mb-4`}
+                set:html={content}
+            />
+        )) ||
+        (level === 4 && (
+            <h4 class={blockStyles.join(" ")} set:html={content} />
+        )) || <h5 class={blockStyles.join(" ")} set:html={content} />
+}

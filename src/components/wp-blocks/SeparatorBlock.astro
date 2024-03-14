@@ -1,0 +1,14 @@
+---
+const { anchor, className, backgroundColor } = Astro.props;
+
+export const SEPARATOR_BLOCK_ATTRIBUTES = `
+    fragment SeparatorBlockAttributes on CoreSeparatorBlockAttributes {
+        anchor
+        backgroundColor
+        className
+        style
+    }
+`;
+---
+
+<hr id={anchor} class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
