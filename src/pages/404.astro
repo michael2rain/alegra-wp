@@ -1,0 +1,32 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Donut from "../components/icons/Donut.astro";
+---
+
+<Layout>
+    <section
+        class="overflow-hidden flex flex-col items-center justify-center h-[calc(100vh_-_22.5rem)] md:h-[calc(100vh_-_20rem)] lg:h-[calc(100vh_-_22rem)] p-4"
+    >
+        <span
+            class="rounded-full bg-brand-red/15 text-brand-red font-medium md:text-lg border border-brand-red/30 px-3 py-1 md:-mb-6"
+            >Error</span
+        >
+        <article class="-mt-12 translate-x-4 md:translate-x-10">
+            <h1
+                class="text-[11rem] md:text-[21rem] font-bold text-brand-red flex flex-row items-center"
+            >
+                <span class="translate-x-24 md:translate-x-12 z-20">4</span>
+                <Donut
+                    width={200}
+                    className="z-10 translate-y-3.5 -translate-x-1 scale-50 md:scale-90"
+                />
+                <span class="-translate-x-36 md:-translate-x-32">4</span>
+            </h1>
+        </article>
+        <p
+            class="text-2xl font-medium max-w-96 text-center text-balance text-slate-600 -mt-6 md:-mt-9 2xl:mb-14"
+        >
+            Lo sentimos, no encontramos lo que estás buscando.
+        </p>
+    </section>
+</Layout>
